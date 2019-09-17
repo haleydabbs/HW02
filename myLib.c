@@ -21,10 +21,10 @@ void drawRect(int row, int col, int height, int width, unsigned short color)
 }
 
 //Drawing background for the game
-void drawBG() {
+void drawBG(u16 color) {
 
     for (int i = 0; i < SCREENSIZE; i++) {
-        videoBuffer[i] = SUNSET1;
+        videoBuffer[i] = color;
     }
 
 }

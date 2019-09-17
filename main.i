@@ -13,7 +13,7 @@ extern u16 *videoBuffer;
 # 55 "myLib.h"
 void setPixel(int row, int col, u16 color);
 void drawRect(int row, int col, int height, int width, u16 color);
-void drawBG();
+void drawBG(u16 color);
 void fillScreen(u16 color);
 void waitForVBlank();
 # 79 "myLib.h"
@@ -33,6 +33,7 @@ void starDraw();
 void starCatcherDraw();
 int starSpeedGenerator();
 void pointsDraw();
+void endGame();
 
 
 
@@ -1513,7 +1514,9 @@ int main() {
 
 void initialize() {
 
+
     (*(u16 *)0x4000000) = 3 | (1<<10);
+
 
     buttons = (*(volatile u16 *)0x04000130);
     oldButtons = 0;
@@ -1521,7 +1524,7 @@ void initialize() {
     counter = 0;
 
 
-    drawBG();
+    drawBG(((15) | (0)<<5 | (31)<<10));
 
 
     s1y = 0;
@@ -1557,16 +1560,23 @@ void initialize() {
 void update() {
 
 
-    if ((~(*(volatile u16 *)0x04000130) & ((1<<5)))) {
-        drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
-        cx -= (cVel);
-        drawRect(cy, cx, cHeight, cWidth, ((31) | (31)<<5 | (0)<<10));
-    }
 
-    if ((~(*(volatile u16 *)0x04000130) & ((1<<4)))) {
-        drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
-        cx += (cVel);
-        drawRect(cy, cx, cHeight, cWidth, ((31) | (31)<<5 | (0)<<10));
+    if (counter < 7) {
+
+
+
+
+        if ((~(*(volatile u16 *)0x04000130) & ((1<<5)))) {
+            drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
+            cx -= (cVel);
+            drawRect(cy, cx, cHeight, cWidth, ((31) | (31)<<5 | (0)<<10));
+        }
+
+        if ((~(*(volatile u16 *)0x04000130) & ((1<<4)))) {
+            drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
+            cx += (cVel);
+            drawRect(cy, cx, cHeight, cWidth, ((31) | (31)<<5 | (0)<<10));
+        }
     }
 
 
@@ -1591,14 +1601,23 @@ void update() {
 
 void draw() {
 
-
-    starDraw();
-
-
-    starCatcherDraw();
+    if (counter < 7) {
 
 
-    pointsDraw();
+        starDraw();
+
+
+        starCatcherDraw();
+
+
+        pointsDraw();
+
+    } else {
+
+
+        endGame();
+
+    }
 
 }
 
@@ -1622,13 +1641,11 @@ void starReset(int starNum, int collideNum) {
 
     if (starNum == 1) {
 
-
         s1y = 0;
         s1x = starGenerator();
         s1Vel = starSpeedGenerator();
 
     } else if (starNum == 2) {
-
 
         s2y = 0;
         s2x = starGenerator();
@@ -1643,6 +1660,7 @@ void starReset(int starNum, int collideNum) {
     }
 
 }
+
 
 void starDraw() {
 
@@ -1662,11 +1680,13 @@ void starDraw() {
 
 }
 
+
 void starCatcherDraw() {
     drawRect(cy, cx, cHeight, cWidth, ((31) | (31)<<5 | (0)<<10));
     cOldy = cy;
     cOldx = cx;
 }
+
 
 void pointsDraw() {
     if ((counter != 0) && (counter < 8)) {
@@ -1674,4 +1694,9 @@ void pointsDraw() {
             drawRect(pBoxY + 3, pBoxX + (counter * 5), 3, 3, ((31) | (31)<<5 | (31)<<10));
         }
     }
+}
+
+
+void endGame() {
+    drawBG(0);
 }

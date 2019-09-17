@@ -8,6 +8,7 @@ void starDraw();
 void starCatcherDraw();
 int starSpeedGenerator();
 void pointsDraw();
+void endGame();
 
 /* --------- Variables --------*/
 //Buttons

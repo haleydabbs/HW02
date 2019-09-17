@@ -54,7 +54,7 @@ extern u16 *videoBuffer;
 /* drawing functions */
 void setPixel(int row, int col, u16 color);
 void drawRect(int row, int col, int height, int width, u16 color);
-void drawBG();
+void drawBG(u16 color);
 void fillScreen(u16 color);
 void waitForVBlank();
 

@@ -13,7 +13,7 @@ extern u16 *videoBuffer;
 # 55 "myLib.h"
 void setPixel(int row, int col, u16 color);
 void drawRect(int row, int col, int height, int width, u16 color);
-void drawBG();
+void drawBG(u16 color);
 void fillScreen(u16 color);
 void waitForVBlank();
 # 79 "myLib.h"
@@ -44,10 +44,10 @@ void drawRect(int row, int col, int height, int width, unsigned short color)
 }
 
 
-void drawBG() {
+void drawBG(u16 color) {
 
     for (int i = 0; i < 38400; i++) {
-        videoBuffer[i] = ((15) | (0)<<5 | (31)<<10);
+        videoBuffer[i] = color;
     }
 
 }

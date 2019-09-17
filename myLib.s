@@ -91,12 +91,11 @@ drawBG:
 	@ link register save eliminated.
 	ldr	r3, .L19
 	ldr	r2, .L19+4
-	ldr	r0, [r3]
-	ldr	r1, .L19+8
-	sub	r3, r0, #2
-	add	r2, r0, r2
+	ldr	r1, [r3]
+	sub	r3, r1, #2
+	add	r2, r1, r2
 .L16:
-	strh	r1, [r3, #2]!	@ movhi
+	strh	r0, [r3, #2]!	@ movhi
 	cmp	r3, r2
 	bne	.L16
 	bx	lr
@@ -105,7 +104,6 @@ drawBG:
 .L19:
 	.word	.LANCHOR0
 	.word	76798
-	.word	31759
 	.size	drawBG, .-drawBG
 	.align	2
 	.global	waitForVBlank
