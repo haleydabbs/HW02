@@ -79,12 +79,12 @@ drawRect:
 	.word	.LANCHOR0
 	.size	drawRect, .-drawRect
 	.align	2
-	.global	drawSunset
+	.global	drawBG
 	.syntax unified
 	.arm
 	.fpu softvfp
-	.type	drawSunset, %function
-drawSunset:
+	.type	drawBG, %function
+drawBG:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
@@ -106,7 +106,7 @@ drawSunset:
 	.word	.LANCHOR0
 	.word	76798
 	.word	31759
-	.size	drawSunset, .-drawSunset
+	.size	drawBG, .-drawBG
 	.align	2
 	.global	waitForVBlank
 	.syntax unified
@@ -170,48 +170,6 @@ collision:
 .L33:
 	.word	.LANCHOR1
 	.size	collision, .-collision
-	.align	2
-	.global	drawStarCatcher
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	drawStarCatcher, %function
-drawStarCatcher:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	lr, .L42
-	rsb	ip, r0, r0, lsl #4
-	ldr	r4, [lr]
-	add	r0, r2, r1
-	add	r0, r0, ip, lsl #4
-	add	r0, r4, r0, lsl #1
-	lsl	ip, ip, #4
-	add	r4, r4, r1, lsl #1
-	sub	lr, r2, #3
-.L38:
-	cmp	r2, #0
-	ble	.L36
-	add	r1, r4, ip, lsl #1
-.L37:
-	strh	r3, [r1], #2	@ movhi
-	cmp	r1, r0
-	bne	.L37
-.L36:
-	sub	r2, r2, #1
-	add	r0, r0, #476
-	cmp	r2, lr
-	add	r0, r0, #2
-	add	ip, ip, #240
-	bne	.L38
-	pop	{r4, lr}
-	bx	lr
-.L43:
-	.align	2
-.L42:
-	.word	.LANCHOR0
-	.size	drawStarCatcher, .-drawStarCatcher
 	.global	collided
 	.global	videoBuffer
 	.data

@@ -3,10 +3,11 @@ void initialize();
 void update();
 void draw();
 int starGenerator();
-void starReset(int);
+void starReset(int, int);
 void starDraw();
 void starCatcherDraw();
 int starSpeedGenerator();
+void pointsDraw();
 
 /* --------- Variables --------*/
 //Buttons
@@ -32,6 +33,8 @@ int s2Oldy;
 //star dimensions
 #define STARDIMS 4
 #define STARCOLOR WHITE
+//Points counter
+int counter;
 
 //StarCatcher specs
 int cx;
@@ -40,5 +43,14 @@ int cOldx;
 int cOldy;
 int cWidth;
 int cHeight;
-#define CATCHERCOLOR GREEN
+#define CATCHERCOLOR YELLOW
 int cVel;
+
+//PointsBoxDimensions
+int pBoxX;
+int pBoxY;
+int pBoxWidth;
+int pBoxHeight;
+#define POINTSDIMS 3
+#define PBOXCOLOR BLACK
+#define POINTSCOLOR WHITE

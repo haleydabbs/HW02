@@ -21,7 +21,7 @@ void drawRect(int row, int col, int height, int width, unsigned short color)
 }
 
 //Drawing background for the game
-void drawSunset() {
+void drawBG() {
 
     for (int i = 0; i < SCREENSIZE; i++) {
         videoBuffer[i] = SUNSET1;
@@ -44,11 +44,5 @@ int collision(int rowA, int colA, int heightA, int widthA, int rowB, int colB, i
     }
     return 0;
     collided = 0;
-}
-
-void drawStarCatcher(int row, int col, int width, u16 color) {
-    for (int i = 0; i < 3; i++) {
-        drawRect(row + i, col, 1, width - i, color);
-    }
 }
 

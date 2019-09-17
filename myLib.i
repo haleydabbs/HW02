@@ -13,14 +13,13 @@ extern u16 *videoBuffer;
 # 55 "myLib.h"
 void setPixel(int row, int col, u16 color);
 void drawRect(int row, int col, int height, int width, u16 color);
-void drawSunset();
+void drawBG();
 void fillScreen(u16 color);
 void waitForVBlank();
-void drawStarCatcher(int, int, int, u16);
-# 80 "myLib.h"
+# 79 "myLib.h"
 extern u16 oldButtons;
 extern u16 buttons;
-# 90 "myLib.h"
+# 89 "myLib.h"
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 # 2 "myLib.c" 2
 
@@ -45,7 +44,7 @@ void drawRect(int row, int col, int height, int width, unsigned short color)
 }
 
 
-void drawSunset() {
+void drawBG() {
 
     for (int i = 0; i < 38400; i++) {
         videoBuffer[i] = ((15) | (0)<<5 | (31)<<10);
@@ -68,10 +67,4 @@ int collision(int rowA, int colA, int heightA, int widthA, int rowB, int colB, i
     }
     return 0;
     collided = 0;
-}
-
-void drawStarCatcher(int row, int col, int width, u16 color) {
-    for (int i = 0; i < 3; i++) {
-        drawRect(row + i, col, 1, width - i, color);
-    }
 }

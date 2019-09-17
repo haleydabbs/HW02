@@ -28,8 +28,10 @@ void initialize() {
     buttons = BUTTONS;
     oldButtons = 0;
 
+    counter = 0;
+
     //Drawing BG
-    drawSunset();
+    drawBG();
 
     //Initializing and drawing the stars
     s1y = 0;
@@ -52,6 +54,13 @@ void initialize() {
     cy = 120;
     cx = ((SCREENWIDTH/2) - (cWidth/2));
     drawRect(cy, cx, cHeight, cWidth, CATCHERCOLOR);
+
+    //Initializing points box
+    pBoxX = 194;
+    pBoxY = 147;
+    pBoxWidth = 43;
+    pBoxHeight = 10;
+    drawRect(pBoxY, pBoxX, pBoxHeight, pBoxWidth, PBOXCOLOR);
 }
 
 //Update game logic
@@ -70,11 +79,18 @@ void update() {
         drawRect(cy, cx, cHeight, cWidth, CATCHERCOLOR);
     }
 
-    //if stars go off edge of screen, reset
-    if ((s1y >= SCREENHEIGHT) || (collision(s1x, s1y, STARDIMS, STARDIMS, cx, cy, cWidth, cHeight))) {
-        starReset(1);
-    } else if ((s2y >= SCREENHEIGHT) || (collision(s2x, s2y, STARDIMS, STARDIMS, cx, cy, cWidth, cHeight))) {
-        starReset(2);
+    //if stars go off edge of screen or hit points area, reset
+    if ((s1y >= SCREENHEIGHT) || (collision(s1x, s1y, STARDIMS, STARDIMS, pBoxX - STARDIMS, pBoxY - STARDIMS, pBoxWidth, pBoxHeight))) {
+        starReset(1, 0);
+    } else if ((s2y >= SCREENHEIGHT) || (collision(s2x, s2y, STARDIMS, STARDIMS, pBoxX - STARDIMS, pBoxY - STARDIMS, pBoxWidth, pBoxHeight))) {
+        starReset(2, 0);
+    }
+
+    //if stars collide, reset and add point
+    if (collision(s1x, s1y, STARDIMS, STARDIMS, cx, cy, cWidth, cHeight)) {
+        starReset(1, 1);
+    } else if (collision(s2x, s2y, STARDIMS, STARDIMS, cx, cy, cWidth, cHeight)) {
+        starReset(2, 1);
     }
 
     //Update stars' position
@@ -85,11 +101,14 @@ void update() {
 //Draw objects
 void draw() { 
 
-    //Update star position and reset to random spot at row 0
-    //if the star goes past the bottom
+    //Draw stars
     starDraw();
 
+    //Draw star catcher
     starCatcherDraw();
+
+    //Draw points
+    pointsDraw();
 
 }
 
@@ -108,8 +127,9 @@ int starSpeedGenerator() {
 }
 
 //Reset the stars to a random position at top of screen
-void starReset(int starNum) {
+void starReset(int starNum, int collideNum) {
 
+    //See which star needs to be reset, and reset accordingly
     if (starNum == 1) {
        
         //Reset y to 0 and pick a new x starting point & velocity
@@ -124,6 +144,12 @@ void starReset(int starNum) {
         s2x = starGenerator();
         s2Vel = starSpeedGenerator();
 
+    }
+
+    //Check if reset was due to collision
+    //If collision happened, update points counter
+    if (collideNum) {
+        counter++;
     }
 
 }
@@ -150,4 +176,12 @@ void starCatcherDraw() {
     drawRect(cy, cx, cHeight, cWidth, CATCHERCOLOR);
     cOldy = cy;
     cOldx = cx;
+}
+
+void pointsDraw() {
+    if ((counter != 0) && (counter < 8)) {
+        for (int i = 0; i < counter; i++) {
+            drawRect(pBoxY + POINTSDIMS, pBoxX + (counter * 5), POINTSDIMS, POINTSDIMS, POINTSCOLOR);
+        }
+    }
 }
