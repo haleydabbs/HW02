@@ -45,25 +45,25 @@ drawRect:
 	@ args = 4, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	subs	lr, r3, #0
+	subs	lr, r2, #0
 	ldrh	ip, [sp, #8]
 	ble	.L5
 	rsb	r0, r0, r0, lsl #4
-	add	r0, r2, r0, lsl #4
+	add	r0, r3, r0, lsl #4
 	add	r1, r0, r1
 	mov	r0, #0
-	ldr	r3, .L13
-	ldr	r3, [r3]
-	rsb	r4, r2, r2, lsl #31
-	add	r1, r3, r1, lsl #1
+	ldr	r2, .L13
+	ldr	r2, [r2]
+	rsb	r4, r3, r3, lsl #31
+	add	r1, r2, r1, lsl #1
 	lsl	r4, r4, #1
 .L7:
-	cmp	r2, #0
-	addgt	r3, r1, r4
+	cmp	r3, #0
+	addgt	r2, r1, r4
 	ble	.L10
 .L8:
-	strh	ip, [r3], #2	@ movhi
-	cmp	r3, r1
+	strh	ip, [r2], #2	@ movhi
+	cmp	r2, r1
 	bne	.L8
 .L10:
 	add	r0, r0, #1
@@ -88,44 +88,23 @@ drawSunset:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L23
-	push	{r4, r5, lr}
-	mov	r3, #0
-	ldr	r0, .L23+4
-	ldr	r2, [r2]
-	ldr	r5, .L23+8
-	ldr	r4, .L23+12
-	ldr	ip, .L23+16
-	ldr	r1, .L23+20
-	ldr	lr, .L23+24
-	b	.L20
-.L17:
-	add	r3, r3, #1
-	add	r2, r2, #2
-.L20:
-	cmp	r3, #9600
-	strhcc	lr, [r2]	@ movhi
-	bcc	.L17
-	cmp	r3, #19200
-	strhlt	r1, [r2]	@ movhi
-	blt	.L17
-	cmp	r3, r0
-	strhle	ip, [r2]	@ movhi
-	ble	.L17
-	cmp	r3, r4
-	strh	r5, [r2]	@ movhi
-	bne	.L17
-	pop	{r4, r5, lr}
+	@ link register save eliminated.
+	ldr	r3, .L19
+	ldr	r2, .L19+4
+	ldr	r0, [r3]
+	ldr	r1, .L19+8
+	sub	r3, r0, #2
+	add	r2, r0, r2
+.L16:
+	strh	r1, [r3, #2]!	@ movhi
+	cmp	r3, r2
+	bne	.L16
 	bx	lr
-.L24:
+.L20:
 	.align	2
-.L23:
+.L19:
 	.word	.LANCHOR0
-	.word	28799
-	.word	32057
-	.word	38399
-	.word	31959
-	.word	31860
+	.word	76798
 	.word	31759
 	.size	drawSunset, .-drawSunset
 	.align	2
@@ -140,15 +119,15 @@ waitForVBlank:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
 	mov	r2, #67108864
-.L26:
+.L22:
 	ldrh	r3, [r2, #6]
 	cmp	r3, #160
-	bhi	.L26
+	bhi	.L22
 	mov	r2, #67108864
-.L27:
+.L23:
 	ldrh	r3, [r2, #6]
 	cmp	r3, #159
-	bls	.L27
+	bls	.L23
 	bx	lr
 	.size	waitForVBlank, .-waitForVBlank
 	.align	2
@@ -165,32 +144,74 @@ collision:
 	ldr	ip, [sp, #4]
 	add	r3, r1, r3
 	cmp	r3, ip
-	ble	.L36
+	ble	.L32
 	ldr	r3, [sp, #12]
 	add	ip, ip, r3
 	cmp	ip, r1
-	ble	.L36
+	ble	.L32
 	ldr	r3, [sp]
 	add	r2, r0, r2
 	cmp	r2, r3
-	ble	.L36
+	ble	.L32
 	ldr	r2, [sp, #8]
 	add	r3, r3, r2
 	cmp	r3, r0
-	ble	.L36
-	ldr	r3, .L37
+	ble	.L32
+	ldr	r3, .L33
 	ldr	r0, [r3]
 	rsbs	r0, r0, #1
 	movcc	r0, #0
 	bx	lr
-.L36:
+.L32:
 	mov	r0, #0
 	bx	lr
-.L38:
+.L34:
 	.align	2
-.L37:
+.L33:
 	.word	.LANCHOR1
 	.size	collision, .-collision
+	.align	2
+	.global	drawStarCatcher
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	drawStarCatcher, %function
+drawStarCatcher:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, lr}
+	ldr	lr, .L42
+	rsb	ip, r0, r0, lsl #4
+	ldr	r4, [lr]
+	add	r0, r2, r1
+	add	r0, r0, ip, lsl #4
+	add	r0, r4, r0, lsl #1
+	lsl	ip, ip, #4
+	add	r4, r4, r1, lsl #1
+	sub	lr, r2, #3
+.L38:
+	cmp	r2, #0
+	ble	.L36
+	add	r1, r4, ip, lsl #1
+.L37:
+	strh	r3, [r1], #2	@ movhi
+	cmp	r1, r0
+	bne	.L37
+.L36:
+	sub	r2, r2, #1
+	add	r0, r0, #476
+	cmp	r2, lr
+	add	r0, r0, #2
+	add	ip, ip, #240
+	bne	.L38
+	pop	{r4, lr}
+	bx	lr
+.L43:
+	.align	2
+.L42:
+	.word	.LANCHOR0
+	.size	drawStarCatcher, .-drawStarCatcher
 	.global	collided
 	.global	videoBuffer
 	.data

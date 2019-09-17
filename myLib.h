@@ -57,6 +57,7 @@ void drawRect(int row, int col, int height, int width, u16 color);
 void drawSunset();
 void fillScreen(u16 color);
 void waitForVBlank();
+void drawStarCatcher(int, int, int, u16);
 
 /* ================================== INPUT =================================== */
 

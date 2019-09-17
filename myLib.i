@@ -16,10 +16,11 @@ void drawRect(int row, int col, int height, int width, u16 color);
 void drawSunset();
 void fillScreen(u16 color);
 void waitForVBlank();
-# 79 "myLib.h"
+void drawStarCatcher(int, int, int, u16);
+# 80 "myLib.h"
 extern u16 oldButtons;
 extern u16 buttons;
-# 89 "myLib.h"
+# 90 "myLib.h"
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 # 2 "myLib.c" 2
 
@@ -33,7 +34,7 @@ void setPixel(int row, int col, unsigned short color)
 }
 
 
-void drawRect(int row, int col, int width, int height, unsigned short color)
+void drawRect(int row, int col, int height, int width, unsigned short color)
 {
     int r,c;
     for(r = 0; r < height; r++) {
@@ -47,18 +48,7 @@ void drawRect(int row, int col, int width, int height, unsigned short color)
 void drawSunset() {
 
     for (int i = 0; i < 38400; i++) {
-        if (i < (38400/4)) {
-            videoBuffer[i] = ((15) | (0)<<5 | (31)<<10);
-        }
-        else if (i < (38400/4 * 2)) {
-            videoBuffer[i] = ((20) | (3)<<5 | (31)<<10);
-        }
-        else if (i < (38400/4 * 3)) {
-            videoBuffer[i] = ((23) | (6)<<5 | (31)<<10);
-        }
-        else if (i < (38400/4 * 4)) {
-            videoBuffer[i] = ((25) | (9)<<5 | (31)<<10);
-        }
+        videoBuffer[i] = ((15) | (0)<<5 | (31)<<10);
     }
 
 }
@@ -78,4 +68,10 @@ int collision(int rowA, int colA, int heightA, int widthA, int rowB, int colB, i
     }
     return 0;
     collided = 0;
+}
+
+void drawStarCatcher(int row, int col, int width, u16 color) {
+    for (int i = 0; i < 3; i++) {
+        drawRect(row + i, col, 1, width - i, color);
+    }
 }

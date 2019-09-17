@@ -16,10 +16,11 @@ void drawRect(int row, int col, int height, int width, u16 color);
 void drawSunset();
 void fillScreen(u16 color);
 void waitForVBlank();
-# 79 "myLib.h"
+void drawStarCatcher(int, int, int, u16);
+# 80 "myLib.h"
 extern u16 oldButtons;
 extern u16 buttons;
-# 89 "myLib.h"
+# 90 "myLib.h"
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 # 2 "main.c" 2
 # 1 "main.h" 1
@@ -28,21 +29,45 @@ void initialize();
 void update();
 void draw();
 int starGenerator();
+void starReset(int);
+void starDraw();
+void starCatcherDraw();
+int starSpeedGenerator();
 
 
 
 u16 buttons;
 u16 oldButtons;
 
+
 u16 bgColor;
 
-int starCounter;
+
 
 int s1x;
 int s1y;
 int s1Oldx;
 int s1Oldy;
 int s1Vel;
+
+int s2x;
+int s2y;
+int s2Vel;
+int s2Oldx;
+int s2Oldy;
+
+
+
+
+
+int cx;
+int cy;
+int cOldx;
+int cOldy;
+int cWidth;
+int cHeight;
+
+int cVel;
 # 3 "main.c" 2
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdio.h" 1 3
 # 29 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdio.h" 3
@@ -1489,42 +1514,65 @@ void initialize() {
     drawSunset();
 
 
-    starCounter = 0;
-
     s1y = 0;
-
-
     s1x = starGenerator();
     s1Oldy = s1y;
     s1Oldx = s1x;
+    s1Vel = starSpeedGenerator();
+    s2y = 0;
+    s2x = starGenerator();
+    s2Oldy = s2y;
+    s2Oldx = s2x;
+    s2Vel = starSpeedGenerator();
+    drawRect(s1y, s1x, 4, 4, ((31) | (31)<<5 | (31)<<10));
+    drawRect(s2y, s2x, 4, 4, ((31) | (31)<<5 | (31)<<10));
 
 
-    s1Vel = 1;
-
-
-
-    drawRect(s1y, s1x, 5, 5, ((31) | (31)<<5 | (31)<<10));
-
-
-
+    cVel = 2;
+    cWidth = 20;
+    cHeight = 3;
+    cy = 120;
+    cx = ((240/2) - (cWidth/2));
+    drawRect(cy, cx, cHeight, cWidth, ((0) | (31)<<5 | (0)<<10));
 }
 
 
 void update() {
+
+
+    if ((~(*(volatile u16 *)0x04000130) & ((1<<5)))) {
+        drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
+        cx -= (cVel);
+        drawRect(cy, cx, cHeight, cWidth, ((0) | (31)<<5 | (0)<<10));
+    }
+
+    if ((~(*(volatile u16 *)0x04000130) & ((1<<4)))) {
+        drawRect(cy, cx, cHeight, cWidth, ((15) | (0)<<5 | (31)<<10));
+        cx += (cVel);
+        drawRect(cy, cx, cHeight, cWidth, ((0) | (31)<<5 | (0)<<10));
+    }
+
+
+    if ((s1y >= 160) || (collision(s1x, s1y, 4, 4, cx, cy, cWidth, cHeight))) {
+        starReset(1);
+    } else if ((s2y >= 160) || (collision(s2x, s2y, 4, 4, cx, cy, cWidth, cHeight))) {
+        starReset(2);
+    }
+
+
     s1y += s1Vel;
-
-
+    s2y += s2Vel;
 }
 
 
 void draw() {
 
-    drawRect(s1Oldy, s1Oldx, 5, 5, ((15) | (0)<<5 | (31)<<10));
 
-    drawRect(s1y, s1x, 5, 5, ((31) | (31)<<5 | (31)<<10));
 
-    s1Oldy = s1y;
-    s1Oldx = s1x;
+    starDraw();
+
+    starCatcherDraw();
+
 }
 
 
@@ -1532,4 +1580,56 @@ int starGenerator() {
     int num;
     num = rand() % 236;
     return num;
+}
+
+
+int starSpeedGenerator() {
+    int num;
+    num = (rand() % 4) + 1;
+    return num;
+}
+
+
+void starReset(int starNum) {
+
+    if (starNum == 1) {
+
+
+        s1y = 0;
+        s1x = starGenerator();
+        s1Vel = starSpeedGenerator();
+
+    } else if (starNum == 2) {
+
+
+        s2y = 0;
+        s2x = starGenerator();
+        s2Vel = starSpeedGenerator();
+
+    }
+
+}
+
+void starDraw() {
+
+
+    drawRect(s1Oldy, s1Oldx, 4, 4, ((15) | (0)<<5 | (31)<<10));
+    drawRect(s2Oldy, s2Oldx, 4, 4, ((15) | (0)<<5 | (31)<<10));
+
+
+    drawRect(s1y, s1x, 4, 4, ((31) | (31)<<5 | (31)<<10));
+    drawRect(s2y, s2x, 4, 4, ((31) | (31)<<5 | (31)<<10));
+
+
+    s1Oldy = s1y;
+    s1Oldx = s1x;
+    s2Oldy = s2y;
+    s2Oldx = s2x;
+
+}
+
+void starCatcherDraw() {
+    drawRect(cy, cx, cHeight, cWidth, ((0) | (31)<<5 | (0)<<10));
+    cOldy = cy;
+    cOldx = cx;
 }
