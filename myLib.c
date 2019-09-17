@@ -3,11 +3,13 @@
 u16 *videoBuffer = (u16 *)0x6000000;
 int collided = 0;
 
+//Function to set a single pixel
 void setPixel(int row, int col, unsigned short color)
 {
     videoBuffer[OFFSET(row, col, SCREENWIDTH)] = color;
 }
 
+//Function to draw rectangles
 void drawRect(int row, int col, int width, int height, unsigned short color)
 {
     int r,c;
@@ -18,37 +20,34 @@ void drawRect(int row, int col, int width, int height, unsigned short color)
     }
 }
 
-void drawSunset(u16 colorA, u16 colorB, u16 colorC, u16 colorD) {
-
-    int x = 0;
-    int y = 0;
+//Drawing background for the game
+void drawSunset() {
 
     for (int i = 0; i < SCREENSIZE; i++) {
-        if ((i % 240 == 0) & (i > 239)) {
-            y++;
+        if (i < (SCREENSIZE/4)) {
+            videoBuffer[i] = SUNSET1;
         }
-        if (y < 40) {
-            setPixel(y, x + (i % 240), colorA);
+        else if (i < (SCREENSIZE/4 * 2)) {
+            videoBuffer[i] = SUNSET2;
         }
-        else if ((y >= 40) && (y < 80)) {
-            setPixel(y, x + (i % 240), colorB);
+        else if (i < (SCREENSIZE/4 * 3)) {
+            videoBuffer[i] = SUNSET3;
         }
-        else if ((y >= 80) && (y < 120)) {
-            setPixel(y, x + (i % 240), colorC);
-        }
-        else if (y >= 120) {
-            setPixel(y, x + (i % 240), colorD);
+        else if (i < (SCREENSIZE/4 * 4)) {
+            videoBuffer[i] = SUNSET4;
         }
     }
 
 }
 
+//Function to delay for animation purposes
 void waitForVBlank()
 {
     while(SCANLINECOUNTER > 160);
     while(SCANLINECOUNTER < 160);
 }
 
+//Function to detect collision
 int collision(int rowA, int colA, int heightA, int widthA, int rowB, int colB, int heightB, int widthB) {
     if (((colA + widthA) > (colB)) && ((colB + widthB) > colA) && ((rowA + heightA) > (rowB)) && ((rowB + heightB > (rowA))) && (collided == 0)) {
         return 1;

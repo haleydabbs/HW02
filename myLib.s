@@ -88,56 +88,45 @@ drawSunset:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, r9, lr}
-	mov	lr, #0
-	ldr	r4, .L27
-	mov	ip, lr
-	mov	r5, lr
-	mov	r6, lr
-	ldr	r7, [r4]
-	ldr	r8, .L27+4
-	b	.L16
-.L22:
-	umull	r4, ip, r8, lr
-	lsr	ip, ip, #7
-	rsb	ip, ip, ip, lsl #4
-	subs	ip, lr, ip, lsl #4
-	moveq	r4, #1
-	movne	r4, #0
-	cmp	lr, #239
-	movle	r4, #0
-	andgt	r4, r4, #1
-	cmp	r4, #0
-	addne	r5, r5, #1
-	lslne	r6, r5, #4
-.L16:
-	sub	r4, r6, r5
-	add	ip, ip, r4, lsl #4
-	cmp	r5, #39
-	lsl	r4, ip, #1
-	strhle	r0, [r7, r4]	@ movhi
-	sub	r9, r5, #40
-	ble	.L19
-	cmp	r9, #39
-	lsl	ip, ip, #1
-	strhls	r1, [r7, ip]	@ movhi
-	sub	r4, r5, #80
-	bls	.L19
-	cmp	r4, #39
-	movhi	r4, r3
-	movls	r4, r2
-	strh	r4, [r7, ip]	@ movhi
-.L19:
-	add	lr, lr, #1
-	cmp	lr, #38400
-	bne	.L22
-	pop	{r4, r5, r6, r7, r8, r9, lr}
+	ldr	r2, .L23
+	push	{r4, r5, lr}
+	mov	r3, #0
+	ldr	r0, .L23+4
+	ldr	r2, [r2]
+	ldr	r5, .L23+8
+	ldr	r4, .L23+12
+	ldr	ip, .L23+16
+	ldr	r1, .L23+20
+	ldr	lr, .L23+24
+	b	.L20
+.L17:
+	add	r3, r3, #1
+	add	r2, r2, #2
+.L20:
+	cmp	r3, #9600
+	strhcc	lr, [r2]	@ movhi
+	bcc	.L17
+	cmp	r3, #19200
+	strhlt	r1, [r2]	@ movhi
+	blt	.L17
+	cmp	r3, r0
+	strhle	ip, [r2]	@ movhi
+	ble	.L17
+	cmp	r3, r4
+	strh	r5, [r2]	@ movhi
+	bne	.L17
+	pop	{r4, r5, lr}
 	bx	lr
-.L28:
+.L24:
 	.align	2
-.L27:
+.L23:
 	.word	.LANCHOR0
-	.word	-2004318071
+	.word	28799
+	.word	32057
+	.word	38399
+	.word	31959
+	.word	31860
+	.word	31759
 	.size	drawSunset, .-drawSunset
 	.align	2
 	.global	waitForVBlank
@@ -151,15 +140,15 @@ waitForVBlank:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
 	mov	r2, #67108864
-.L30:
+.L26:
 	ldrh	r3, [r2, #6]
 	cmp	r3, #160
-	bhi	.L30
+	bhi	.L26
 	mov	r2, #67108864
-.L31:
+.L27:
 	ldrh	r3, [r2, #6]
 	cmp	r3, #159
-	bls	.L31
+	bls	.L27
 	bx	lr
 	.size	waitForVBlank, .-waitForVBlank
 	.align	2
@@ -176,30 +165,30 @@ collision:
 	ldr	ip, [sp, #4]
 	add	r3, r1, r3
 	cmp	r3, ip
-	ble	.L40
+	ble	.L36
 	ldr	r3, [sp, #12]
 	add	ip, ip, r3
 	cmp	ip, r1
-	ble	.L40
+	ble	.L36
 	ldr	r3, [sp]
 	add	r2, r0, r2
 	cmp	r2, r3
-	ble	.L40
+	ble	.L36
 	ldr	r2, [sp, #8]
 	add	r3, r3, r2
 	cmp	r3, r0
-	ble	.L40
-	ldr	r3, .L41
+	ble	.L36
+	ldr	r3, .L37
 	ldr	r0, [r3]
 	rsbs	r0, r0, #1
 	movcc	r0, #0
 	bx	lr
-.L40:
+.L36:
 	mov	r0, #0
 	bx	lr
-.L42:
+.L38:
 	.align	2
-.L41:
+.L37:
 	.word	.LANCHOR1
 	.size	collision, .-collision
 	.global	collided

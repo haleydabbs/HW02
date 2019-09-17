@@ -13,7 +13,7 @@ extern u16 *videoBuffer;
 # 55 "myLib.h"
 void setPixel(int row, int col, u16 color);
 void drawRect(int row, int col, int height, int width, u16 color);
-void drawSunset(u16, u16, u16, u16);
+void drawSunset();
 void fillScreen(u16 color);
 void waitForVBlank();
 # 79 "myLib.h"
@@ -26,10 +26,12 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 u16 *videoBuffer = (u16 *)0x6000000;
 int collided = 0;
 
+
 void setPixel(int row, int col, unsigned short color)
 {
     videoBuffer[((row)*(240)+(col))] = color;
 }
+
 
 void drawRect(int row, int col, int width, int height, unsigned short color)
 {
@@ -41,36 +43,33 @@ void drawRect(int row, int col, int width, int height, unsigned short color)
     }
 }
 
-void drawSunset(u16 colorA, u16 colorB, u16 colorC, u16 colorD) {
 
-    int x = 0;
-    int y = 0;
+void drawSunset() {
 
     for (int i = 0; i < 38400; i++) {
-        if ((i % 240 == 0) & (i > 239)) {
-            y++;
+        if (i < (38400/4)) {
+            videoBuffer[i] = ((15) | (0)<<5 | (31)<<10);
         }
-        if (y < 40) {
-            setPixel(y, x + (i % 240), colorA);
+        else if (i < (38400/4 * 2)) {
+            videoBuffer[i] = ((20) | (3)<<5 | (31)<<10);
         }
-        else if ((y >= 40) && (y < 80)) {
-            setPixel(y, x + (i % 240), colorB);
+        else if (i < (38400/4 * 3)) {
+            videoBuffer[i] = ((23) | (6)<<5 | (31)<<10);
         }
-        else if ((y >= 80) && (y < 120)) {
-            setPixel(y, x + (i % 240), colorC);
-        }
-        else if (y >= 120) {
-            setPixel(y, x + (i % 240), colorD);
+        else if (i < (38400/4 * 4)) {
+            videoBuffer[i] = ((25) | (9)<<5 | (31)<<10);
         }
     }
 
 }
+
 
 void waitForVBlank()
 {
     while((*(volatile u16 *)0x4000006) > 160);
     while((*(volatile u16 *)0x4000006) < 160);
 }
+
 
 int collision(int rowA, int colA, int heightA, int widthA, int rowB, int colB, int heightB, int widthB) {
     if (((colA + widthA) > (colB)) && ((colB + widthB) > colA) && ((rowA + heightA) > (rowB)) && ((rowB + heightB > (rowA))) && (collided == 0)) {
